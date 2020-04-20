@@ -1,3 +1,5 @@
+@Library('github.com/releaseworks/jenkinslib') _
+
 pipeline {
     agent {
         docker {
@@ -27,6 +29,9 @@ pipeline {
         stage('Deliver') {
             steps {
                 sh './jenkins/scripts/deliver.sh'
+                withAWS(region:'us-east-2',credentials:'aws-jenkins') {
+                     s3Upload(bucket: 'yazeeh-jenkins', workingDir:'jenkins/scripts', includePathPattern:'**/*');
+                }
             }
         }
     }
